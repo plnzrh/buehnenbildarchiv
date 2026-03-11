@@ -5,12 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bühnenmodell Archiv</title>
 <link href="index-Dateien/css2.css" rel="stylesheet">
-
-<!-- xeokit SDK -->
-<script src="index-Dateien/xeokit-sdk.es.min.js"></script>
-<!-- web-ifc für IFC parsing -->
-<script src="index-Dateien/web-ifc-api.js"></script>
-
 <style>
 :root {
   --bg:#0a0a0a; --surface:#111; --surface2:#1a1a1a;
@@ -35,121 +29,65 @@ header{
 /* SIDEBAR */
 .sidebar{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
 .search-area{padding:.9rem;border-bottom:1px solid var(--border)}
-.sinput{
-  width:100%;background:var(--surface2);border:1px solid var(--border);
-  color:var(--text);font-family:'DM Mono',monospace;font-size:12px;
-  padding:.5rem .75rem;outline:none;margin-bottom:.45rem;
-}
+.sinput{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:.5rem .75rem;outline:none;margin-bottom:.45rem}
 .sinput:focus{border-color:var(--gold-dim)}
 .sinput::placeholder{color:var(--text-dim)}
 .filters{display:flex;gap:.35rem;flex-wrap:wrap}
-.fbtn{
-  background:none;border:1px solid var(--border);color:var(--text-dim);
-  font-family:'DM Mono',monospace;font-size:10px;padding:.22rem .45rem;
-  cursor:pointer;letter-spacing:.05em;text-transform:uppercase;transition:all .15s;
-}
+.fbtn{background:none;border:1px solid var(--border);color:var(--text-dim);font-family:'DM Mono',monospace;font-size:10px;padding:.22rem .45rem;cursor:pointer;letter-spacing:.05em;text-transform:uppercase;transition:all .15s}
 .fbtn:hover,.fbtn.on{border-color:var(--gold);color:var(--gold)}
-
 .plist{overflow-y:auto;flex:1}
 .plist::-webkit-scrollbar{width:3px}
 .plist::-webkit-scrollbar-thumb{background:var(--border)}
-
-.sh{
-  padding:.55rem .9rem .28rem;font-size:10px;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--gold-dim);
-  border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;
-}
-.pi{
-  padding:.75rem .9rem;border-bottom:1px solid var(--border);
-  cursor:pointer;transition:background .15s;
-  display:grid;grid-template-columns:1fr auto;gap:.15rem;align-items:start;
-}
+.sh{padding:.55rem .9rem .28rem;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-dim);border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0}
+.pi{padding:.75rem .9rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;display:grid;grid-template-columns:1fr auto;gap:.15rem;align-items:start}
 .pi:hover{background:var(--surface)}
 .pi.on{background:var(--surface2);border-left:2px solid var(--gold)}
 .pi-name{font-family:'Playfair Display',serif;font-size:.88rem;line-height:1.3}
 .pi-meta{font-size:10px;color:var(--text-dim);margin-top:.12rem}
-.ttag{
-  font-size:9px;padding:.08rem .32rem;border:1px solid var(--border);
-  color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;
-}
+.pi-ifc{font-size:9px;color:var(--gold-dim);margin-top:.1rem}
+.ttag{font-size:9px;padding:.08rem .32rem;border:1px solid var(--border);color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
 .ttag.Oper{border-color:#4a2a0a;color:#c9884c}
 .ttag.Schauspiel{border-color:#0a1a3a;color:#4c8bc9}
 .ttag.Tanz{border-color:#2a0a3a;color:#a04cc9}
-
-.add-sb{
-  margin:.55rem;background:none;border:1px dashed var(--border);color:var(--text-dim);
-  font-family:'DM Mono',monospace;font-size:11px;padding:.55rem;
-  cursor:pointer;width:calc(100% - 1.1rem);text-transform:uppercase;
-  letter-spacing:.07em;transition:all .15s;
-}
+.add-sb{margin:.55rem;background:none;border:1px dashed var(--border);color:var(--text-dim);font-family:'DM Mono',monospace;font-size:11px;padding:.55rem;cursor:pointer;width:calc(100% - 1.1rem);text-transform:uppercase;letter-spacing:.07em;transition:all .15s}
 .add-sb:hover{border-color:var(--gold);color:var(--gold)}
 
 /* MAIN */
 .main{display:flex;flex-direction:column;overflow:hidden;position:relative}
 
 /* VIEWER */
-.vwrap{
-  flex:1;position:relative;background:#050508;overflow:hidden;
-  transition:outline .15s;
-}
+.vwrap{flex:1;position:relative;overflow:hidden;background:#050508}
 .vwrap.dov{outline:2px dashed var(--gold);outline-offset:-4px}
 
+/* Viewer iframe or canvas */
+#viewer-container{width:100%;height:100%;position:relative}
 #vcanvas{width:100%;height:100%;display:block}
 
-.voverlay{
-  position:absolute;inset:0;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:1.1rem;pointer-events:none;transition:opacity .4s;
-}
+.voverlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.1rem;pointer-events:none;transition:opacity .4s;background:#050508}
 .voverlay.gone{opacity:0;pointer-events:none}
-
 .stage-icon{width:150px;height:75px;border:1px solid var(--border);position:relative;overflow:hidden}
-.stage-icon::before{
-  content:'';position:absolute;bottom:0;left:20%;right:20%;
-  height:40%;background:var(--surface2);border-top:1px solid var(--border);
-}
+.stage-icon::before{content:'';position:absolute;bottom:0;left:20%;right:20%;height:40%;background:var(--surface2);border-top:1px solid var(--border)}
 .curt{position:absolute;top:0;width:22%;height:100%}
 .curt.l{left:0;background:linear-gradient(135deg,#1a0808,#0d0404);border-right:1px solid #2a0808}
 .curt.r{right:0;background:linear-gradient(225deg,#1a0808,#0d0404);border-left:1px solid #2a0808}
 .oh{text-align:center;color:var(--text-dim);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
-.od{font-size:10px;color:var(--text-dim);opacity:.5;pointer-events:all}
+.od{font-size:10px;color:var(--text-dim);opacity:.5}
 
-.abadge{
-  position:absolute;top:.9rem;left:.9rem;
-  background:rgba(10,10,10,.88);border:1px solid var(--border);
-  padding:.45rem .85rem;display:none;z-index:10;
-}
+.abadge{position:absolute;top:.9rem;left:.9rem;background:rgba(10,10,10,.88);border:1px solid var(--border);padding:.45rem .85rem;display:none;z-index:10}
 .abadge.vis{display:block}
 .ab-t{font-family:'Playfair Display',serif;font-size:.9rem}
 .ab-s{font-size:10px;color:var(--text-dim);margin-top:.12rem;letter-spacing:.05em}
 
-.vtb{
-  position:absolute;top:.9rem;right:.9rem;
-  display:flex;flex-direction:column;gap:.28rem;z-index:10;
-}
-.vt{
-  width:32px;height:32px;background:rgba(10,10,10,.85);
-  border:1px solid var(--border);color:var(--text-dim);
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  font-size:12px;transition:all .15s;
-}
+.vtb{position:absolute;top:.9rem;right:.9rem;display:flex;flex-direction:column;gap:.28rem;z-index:10}
+.vt{width:32px;height:32px;background:rgba(10,10,10,.85);border:1px solid var(--border);color:var(--text-dim);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s}
 .vt:hover{border-color:var(--gold);color:var(--gold)}
 
-/* Status bar */
-.statusbar{
-  position:absolute;bottom:0;left:0;right:0;height:3px;
-  background:var(--border);display:none;z-index:20;
-}
-.statusbar.on{display:block}
-.sbprog{height:100%;background:var(--gold);width:0%;transition:width .25s}
-
-.statusmsg{
-  position:absolute;bottom:.7rem;left:50%;transform:translateX(-50%);
-  background:rgba(10,10,10,.9);border:1px solid var(--border);
-  padding:.4rem .8rem;font-size:11px;color:var(--text-dim);
-  white-space:nowrap;display:none;z-index:20;
-}
-.statusmsg.vis{display:block}
+/* Loading */
+.loadwrap{position:absolute;inset:0;background:rgba(5,5,8,.92);display:none;flex-direction:column;align-items:center;justify-content:center;gap:1rem;z-index:30}
+.loadwrap.vis{display:flex}
+.loadbar{width:200px;height:3px;background:var(--border)}
+.loadprog{height:100%;background:var(--gold);width:0%;transition:width .3s}
+.loadtxt{font-size:11px;color:var(--text-dim);letter-spacing:.08em}
 
 /* DETAIL */
 .dpanel{border-top:1px solid var(--border);height:180px;display:grid;grid-template-columns:repeat(4,1fr)}
@@ -161,14 +99,10 @@ header{
 .dlist{list-style:none;font-size:11px;color:var(--text);line-height:1.85;overflow:hidden}
 .dlist li{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dlist li::before{content:'—';color:var(--text-dim);margin-right:.35rem;font-size:10px}
-.dempty{grid-column:1/-1;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.dempty{grid-column:1/-1;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:11px;letter-spacing:.1em;text-transform:uppercase;text-align:center;padding:1rem}
 
 /* BTN */
-.btn{
-  background:none;border:1px solid var(--border);color:var(--text-dim);
-  font-family:'DM Mono',monospace;font-size:11px;padding:.42rem .85rem;
-  cursor:pointer;letter-spacing:.07em;text-transform:uppercase;transition:all .15s;
-}
+.btn{background:none;border:1px solid var(--border);color:var(--text-dim);font-family:'DM Mono',monospace;font-size:11px;padding:.42rem .85rem;cursor:pointer;letter-spacing:.07em;text-transform:uppercase;transition:all .15s}
 .btn:hover{border-color:var(--gold-dim);color:var(--text)}
 .btn.p{border-color:var(--gold-dim);color:var(--gold)}
 .btn.p:hover{border-color:var(--gold);background:rgba(201,168,76,.08)}
@@ -176,20 +110,17 @@ header{
 /* MODAL */
 .moverlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;display:none;align-items:center;justify-content:center}
 .moverlay.open{display:flex}
-.modal{background:var(--surface);border:1px solid var(--border);width:490px;max-width:95vw;max-height:90vh;overflow-y:auto}
+.modal{background:var(--surface);border:1px solid var(--border);width:500px;max-width:95vw;max-height:90vh;overflow-y:auto}
 .mhead{padding:1rem 1.3rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--surface);z-index:1}
 .mhead-t{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold)}
 .mbody{padding:1.2rem;display:flex;flex-direction:column;gap:.85rem}
 .field{display:flex;flex-direction:column;gap:.32rem}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:.65rem}
 .field label{font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-dim)}
-.field input,.field select,.field textarea{
-  background:var(--surface2);border:1px solid var(--border);
-  color:var(--text);font-family:'DM Mono',monospace;font-size:12px;
-  padding:.5rem .7rem;outline:none;width:100%;
-}
+.field input,.field select,.field textarea{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:.5rem .7rem;outline:none;width:100%}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold-dim)}
 .field textarea{resize:vertical;min-height:65px}
+.field .hint{font-size:10px;color:var(--text-dim);line-height:1.5}
 .ifc-hint{background:var(--surface2);border:1px solid var(--border);padding:.75rem .9rem;font-size:11px;color:var(--text-dim);line-height:1.7}
 .ifc-hint strong{color:var(--gold)}
 .mfoot{padding:.85rem 1.3rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:.6rem;position:sticky;bottom:0;background:var(--surface)}
@@ -201,9 +132,7 @@ header{
   .vwrap{height:60vh}
   .dpanel{height:auto;page-break-inside:avoid}
   body{background:white;color:black;overflow:visible}
-  .dbig{color:#333}
-  .dlabel,.dunit{color:#666}
-  .dcol{border-right:1px solid #ccc}
+  .dbig{color:#333}.dlabel,.dunit{color:#666}.dcol{border-right:1px solid #ccc}
 }
 </style>
 </head>
@@ -215,7 +144,7 @@ header{
     <span class="logo-sub">Archiv &amp; Dokumentation</span>
   </div>
   <div class="hdr-actions">
-    <span style="color:var(--text-dim);font-size:11px" id="cdisp">3 Produktionen</span>
+    <span style="color:var(--text-dim);font-size:11px" id="cdisp">1 Produktionen</span>
     <button class="btn p" onclick="openModal()">+ Neue Produktion</button>
     <button class="btn" onclick="window.print()">⎙ Drucken</button>
   </div>
@@ -232,45 +161,56 @@ header{
         <button class="fbtn" onclick="setF('Tanz',this)">Tanz</button>
       </div>
     </div>
-    <div class="plist" id="plist"><div><div class="sh">Spielzeit 2024/25</div><div class="pi"><div><div class="pi-name">Don Giovanni</div><div class="pi-meta">Maria Müller · Klaus Weber</div><div class="pi-meta">Premiere 15.11.2024</div></div><div class="ttag Oper">Oper</div></div><div class="pi"><div><div class="pi-name">Hamlet</div><div class="pi-meta">Thomas Berg · Anna Schreiber</div><div class="pi-meta">Premiere 20.01.2025</div></div><div class="ttag Schauspiel">Schauspiel</div></div></div><div><div class="sh">Spielzeit 2023/24</div><div class="pi"><div><div class="pi-name">Schwanensee</div><div class="pi-meta">Elena Voronova · Pierre Dupont</div><div class="pi-meta">Premiere 08.03.2024</div></div><div class="ttag Tanz">Tanz</div></div></div></div>
+    <div class="plist" id="plist"><div><div class="sh">Spielzeit 2024/25</div><div class="pi">
+        <div>
+          <div class="pi-name">Mein erstes Modell</div>
+          <div class="pi-meta">— · —</div>
+          <div class="pi-meta">Premiere —</div>
+          <div class="pi-ifc">● IFC verknüpft</div>
+        </div>
+        <div class="ttag Oper">Oper</div></div></div></div>
     <button class="add-sb" onclick="openModal()">＋ Produktion hinzufügen</button>
   </aside>
 
   <main class="main">
-    <div class="vwrap" id="vwrap" ondragover="dov(event)" ondragleave="dol(event)" ondrop="dop(event)">
-
-      <canvas id="vcanvas"></canvas>
+    <div class="vwrap" id="vwrap" ondragover="dov(event)" ondragleave="dol()" ondrop="dop(event)">
+      <div id="viewer-container">
+        <canvas id="vcanvas"></canvas>
+      </div>
 
       <div class="voverlay" id="voverlay">
         <div class="stage-icon">
           <div class="curt l"></div><div class="curt r"></div>
         </div>
         <div class="oh">Produktion auswählen</div>
-        <div class="od">IFC-Datei hier ablegen oder 📂 öffnen</div>
+        <div class="od">IFC wird von Google Drive geladen</div>
+      </div>
+
+      <!-- Loading overlay -->
+      <div class="loadwrap" id="loadwrap">
+        <div class="loadbar"><div class="loadprog" id="loadprog"></div></div>
+        <div class="loadtxt" id="loadtxt">Lade IFC-Modell …</div>
       </div>
 
       <div class="abadge" id="abadge">
         <div class="ab-t" id="abt"></div>
-        <div class="ab-s" id="abs"></div>
+        <div class="ab-s" id="abs_"></div>
       </div>
 
       <div class="vtb">
         <button class="vt" title="Kamera zurücksetzen" onclick="resetCam()">⟳</button>
-        <button class="vt" title="IFC öffnen" onclick="document.getElementById('fi').click()">📂</button>
+        <button class="vt" title="Lokal öffnen" onclick="document.getElementById('fi').click()">📂</button>
         <button class="vt" title="Drucken" onclick="window.print()">⎙</button>
       </div>
-
-      <div class="statusbar" id="sb"><div class="sbprog" id="sbp"></div></div>
-      <div class="statusmsg" id="smsg"></div>
     </div>
 
     <div class="dpanel" id="dpanel">
-      <div class="dempty">← Produktion auswählen · IFC-Datei ablegen zum Anzeigen im 3D-Viewer</div>
+      <div class="dempty">← Produktion auswählen um Details und 3D-Modell zu laden</div>
     </div>
   </main>
 </div>
 
-<input type="file" id="fi" accept=".ifc" style="display:none" onchange="loadFile(event.target.files[0])">
+<input type="file" id="fi" accept=".ifc" style="display:none" onchange="loadLocalFile(event.target.files[0])">
 
 <!-- MODAL -->
 <div class="moverlay" id="modal" onclick="cmo(event)">
@@ -281,9 +221,9 @@ header{
     </div>
     <div class="mbody">
       <div class="ifc-hint">
-        <strong>IFC-Workflow:</strong> Befehl <strong>IFCEXPORT</strong> in AutoCAD Architecture →
-        IFC-Datei auf GitHub hochladen → per Drag&amp;Drop in den Viewer ziehen.
-        Alle Daten bleiben lokal im Browser.
+        <strong>Workflow:</strong> IFC-Datei auf Google Drive hochladen →
+        Rechtsklick → Freigeben → „Jeder mit dem Link" → Link hier einfügen.
+        Der Viewer lädt die Datei dann automatisch.
       </div>
       <div class="frow">
         <div class="field"><label>Titel *</label><input id="ft" placeholder="z.B. Don Giovanni"></div>
@@ -298,6 +238,11 @@ header{
       <div class="frow">
         <div class="field"><label>Regie</label><input id="fd" placeholder="Name"></div>
         <div class="field"><label>Bühnenbild</label><input id="fde" placeholder="Name"></div>
+      </div>
+      <div class="field">
+        <label>Google Drive Link zur IFC-Datei</label>
+        <input id="furl" placeholder="https://drive.google.com/file/d/…/view">
+        <span class="hint">Datei muss öffentlich freigegeben sein („Jeder mit dem Link")</span>
       </div>
       <div class="frow">
         <div class="field"><label>Anzahl Bauteile</label><input id="fpa" type="number" placeholder="142"></div>
@@ -320,20 +265,31 @@ Birkensperrholz 18mm"></textarea>
 </div>
 
 <script>
+// ─── GOOGLE DRIVE URL HELPER ──────────────────────────────────────────────────
+// Konvertiert Google Drive Share-Link in direkten Download-Link
+function gdrive2direct(url) {
+  if (!url) return null;
+  // Bereits direkt
+  if (url.includes('uc?export=download')) return url;
+  // Standard Share-Link: https://drive.google.com/file/d/ID/view
+  const m = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return `https://drive.google.com/uc?export=download&confirm=t&id=${m[1]}`;
+  // Direkte ID
+  if (url.match(/^[a-zA-Z0-9_-]{25,}$/)) return `https://drive.google.com/uc?export=download&confirm=t&id=${url}`;
+  return url;
+}
+
 // ─── DATA ─────────────────────────────────────────────────────────────────────
-let projects = JSON.parse(localStorage.getItem('bm2') || 'null') || [
-  {id:1,title:"Don Giovanni",type:"Oper",season:"2024/25",premiere:"15.11.2024",director:"Maria Müller",designer:"Klaus Weber",parts:142,weight:3850,
-   xrefs:["dg_01_portal.dwg","dg_02_drehbühne.dwg","dg_03_kulissen.dwg"],
-   materials:["Stahlrohr 60/60 × 3mm","Birkensperrholz 18mm","Textilbespannung"]},
-  {id:2,title:"Hamlet",type:"Schauspiel",season:"2024/25",premiere:"20.01.2025",director:"Thomas Berg",designer:"Anna Schreiber",parts:89,weight:1920,
-   xrefs:["ham_01_hauptbühne.dwg","ham_02_treppe.dwg"],
-   materials:["Stahlblech 3mm","Rauhspund Fichte","Betonimitat GFK"]},
-  {id:3,title:"Schwanensee",type:"Tanz",season:"2023/24",premiere:"08.03.2024",director:"Elena Voronova",designer:"Pierre Dupont",parts:67,weight:1340,
-   xrefs:["swan_01_see.dwg","swan_02_schloss.dwg"],
-   materials:["Plexiglas 10mm","Aluminiumguss","Seidenstoff weiß"]}
+let projects = JSON.parse(localStorage.getItem('bm3') || 'null') || [
+  {
+    id:1, title:"Mein erstes Modell", type:"Oper", season:"2024/25",
+    premiere:"—", director:"—", designer:"—",
+    driveUrl:"https://drive.google.com/file/d/1s9oMB56Ykc4I7eN2O9xWDGFQi9mstQqG/view?usp=sharing",
+    parts:null, weight:null, xrefs:[], materials:[]
+  }
 ];
 let af='Alle', ap=null;
-function save(){localStorage.setItem('bm2',JSON.stringify(projects))}
+function save(){localStorage.setItem('bm3',JSON.stringify(projects))}
 
 // ─── LIST ─────────────────────────────────────────────────────────────────────
 function renderList(){
@@ -354,7 +310,15 @@ function renderList(){
       const e=document.createElement('div');
       e.className='pi'+(ap?.id===p.id?' on':'');
       e.onclick=()=>selP(p);
-      e.innerHTML=`<div><div class="pi-name">${p.title}</div><div class="pi-meta">${p.director||'—'} · ${p.designer||'—'}</div><div class="pi-meta">Premiere ${p.premiere||'—'}</div></div><div class="ttag ${p.type}">${p.type}</div>`;
+      const hasIfc = p.driveUrl ? '● IFC verknüpft' : '○ Kein IFC';
+      e.innerHTML=`
+        <div>
+          <div class="pi-name">${p.title}</div>
+          <div class="pi-meta">${p.director||'—'} · ${p.designer||'—'}</div>
+          <div class="pi-meta">Premiere ${p.premiere||'—'}</div>
+          <div class="pi-ifc">${hasIfc}</div>
+        </div>
+        <div class="ttag ${p.type}">${p.type}</div>`;
       d.appendChild(e);
     });
     l.appendChild(d);
@@ -370,10 +334,20 @@ function setF(f,b){
 }
 
 function selP(p){
-  ap=p; renderList(); renderDetail(p);
+  ap=p;
+  renderList();
+  renderDetail(p);
   document.getElementById('abt').textContent=p.title;
-  document.getElementById('abs').textContent=`${p.type} · ${p.season} · Premiere ${p.premiere}`;
+  document.getElementById('abs_').textContent=`${p.type} · ${p.season} · Premiere ${p.premiere}`;
   document.getElementById('abadge').classList.add('vis');
+
+  // Lade IFC wenn URL vorhanden
+  if(p.driveUrl) {
+    const directUrl = gdrive2direct(p.driveUrl);
+    loadFromUrl(directUrl, p.title);
+  } else {
+    document.getElementById('voverlay').classList.remove('gone');
+  }
 }
 
 function renderDetail(p){
@@ -387,11 +361,34 @@ function renderDetail(p){
     <div class="dcol"><div class="dlabel">Materialien</div><ul class="dlist">${(p.materials||[]).map(m=>`<li title="${m}">${m}</li>`).join('')}</ul></div>`;
 }
 
+// ─── LOADING UI ───────────────────────────────────────────────────────────────
+function showLoad(on, txt='Lade IFC-Modell …', pct=0){
+  const lw=document.getElementById('loadwrap');
+  lw.classList.toggle('vis',on);
+  document.getElementById('loadtxt').textContent=txt;
+  document.getElementById('loadprog').style.width=pct+'%';
+}
+
+// ─── DRAG & DROP (lokal) ──────────────────────────────────────────────────────
+function dov(e){e.preventDefault();document.getElementById('vwrap').classList.add('dov')}
+function dol(){document.getElementById('vwrap').classList.remove('dov')}
+function dop(e){
+  e.preventDefault();dol();
+  const f=e.dataTransfer.files[0];
+  if(f?.name.toLowerCase().endsWith('.ifc')) loadLocalFile(f);
+  else alert('Bitte eine .ifc-Datei ablegen.');
+}
+
+function loadLocalFile(file){
+  const url=URL.createObjectURL(file);
+  loadFromUrl(url, file.name, ()=>URL.revokeObjectURL(url));
+}
+
 // ─── MODAL ────────────────────────────────────────────────────────────────────
 function openModal(){document.getElementById('modal').classList.add('open')}
 function closeModal(){
   document.getElementById('modal').classList.remove('open');
-  ['ft','fs','fp','fd','fde','fpa','fw','fx','fm'].forEach(id=>document.getElementById(id).value='');
+  ['ft','fs','fp','fd','fde','furl','fpa','fw','fx','fm'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fty').selectedIndex=0;
 }
 function cmo(e){if(e.target===document.getElementById('modal'))closeModal()}
@@ -405,6 +402,7 @@ function saveP(){
     premiere:document.getElementById('fp').value||'—',
     director:document.getElementById('fd').value||'—',
     designer:document.getElementById('fde').value||'—',
+    driveUrl:document.getElementById('furl').value.trim()||null,
     parts:parseInt(document.getElementById('fpa').value)||null,
     weight:parseInt(document.getElementById('fw').value)||null,
     xrefs:document.getElementById('fx').value.trim().split('\n').map(s=>s.trim()).filter(Boolean),
@@ -413,156 +411,135 @@ function saveP(){
   projects.unshift(p);save();closeModal();renderList();selP(p);
 }
 
-// ─── DRAG & DROP ──────────────────────────────────────────────────────────────
-function dov(e){e.preventDefault();document.getElementById('vwrap').classList.add('dov')}
-function dol(){document.getElementById('vwrap').classList.remove('dov')}
-function dop(e){
-  e.preventDefault();dol();
-  const f=e.dataTransfer.files[0];
-  if(f?.name.toLowerCase().endsWith('.ifc')) loadFile(f);
-  else showMsg('Bitte eine .ifc-Datei ablegen',3000);
-}
-
-// ─── STATUS ───────────────────────────────────────────────────────────────────
-function showProgress(pct){
-  const sb=document.getElementById('sb');
-  sb.classList.add('on');
-  document.getElementById('sbp').style.width=pct+'%';
-  if(pct>=100) setTimeout(()=>{sb.classList.remove('on');document.getElementById('sbp').style.width='0%'},600);
-}
-function showMsg(txt,ms=2000){
-  const m=document.getElementById('smsg');
-  m.textContent=txt;m.classList.add('vis');
-  setTimeout(()=>m.classList.remove('vis'),ms);
-}
+function resetCam(){if(window._viewer)window._resetCam()}
 
 renderList();
 </script>
 
-<!-- XEOKIT VIEWER SCRIPT -->
+<!-- THREE.JS + IFC.js Viewer -->
 <script type="module">
-// xeokit imports
-const {
-  Viewer, WebIFCLoaderPlugin, DirLight, AmbientLight, buildGridGeometry,
-  ReadableGeometry, Mesh, PhongMaterial
-} = window.xeokit ?? {};
-
-// Fallback: load xeokit properly
-import {
-  Viewer,
-  WebIFCLoaderPlugin,
-  DirLight,
-  AmbientLight,
-  buildGridGeometry,
-  ReadableGeometry,
-  Mesh,
-  PhongMaterial
-} from "https://cdn.jsdelivr.net/npm/@xeokit/xeokit-sdk@2.3.9/dist/xeokit-sdk.es.min.js";
-
-import * as WebIFC from "https://cdn.jsdelivr.net/npm/web-ifc@0.0.51/web-ifc-api.js";
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/controls/OrbitControls.js';
+import { IFCLoader } from 'https://cdn.jsdelivr.net/npm/web-ifc-three@0.0.36/IFCLoader.js';
 
 const canvas = document.getElementById('vcanvas');
 const wrap = document.getElementById('vwrap');
 
-// Size canvas to parent
-function resizeCanvas() {
-  canvas.width = wrap.clientWidth;
-  canvas.height = wrap.clientHeight;
-}
-resizeCanvas();
-new ResizeObserver(resizeCanvas).observe(wrap);
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setClearColor(0x050508);
+renderer.shadowMap.enabled = true;
 
-// Create viewer
-const viewer = new Viewer({
-  canvasId: "vcanvas",
-  transparent: false,
-  backgroundColor: [0.02, 0.02, 0.03]
-});
-
-viewer.camera.eye = [10, 8, 15];
-viewer.camera.look = [0, 2, 0];
-viewer.camera.up = [0, 1, 0];
-
-// Lights
-new AmbientLight(viewer.scene, { color: [1, 1, 1], intensity: 0.4 });
-new DirLight(viewer.scene, { dir: [0.8, -1.2, -0.5], color: [1, 0.95, 0.85], intensity: 1.2, space: "world" });
-new DirLight(viewer.scene, { dir: [-0.5, -0.4, 0.8], color: [0.6, 0.7, 1], intensity: 0.5, space: "world" });
-
-// Grid
-new Mesh(viewer.scene, {
-  geometry: new ReadableGeometry(viewer.scene, buildGridGeometry({ size: 100, divisions: 50 })),
-  material: new PhongMaterial(viewer.scene, { color: [0.12, 0.12, 0.12], emissive: [0.08, 0.08, 0.08] }),
-  position: [0, -0.1, 0], pickable: false, collidable: false
-});
-
-// IFC Loader with web-ifc
-const ifcLoader = new WebIFCLoaderPlugin(viewer, {
-  WebIFC,
-  IfcAPI: WebIFC.IfcAPI,
-  wasmPath: "https://cdn.jsdelivr.net/npm/web-ifc@0.0.51/"
-});
-
-let currentModel = null;
-
-// Fit camera to loaded model
-function fitToModel(model) {
-  const aabb = model.aabb;
-  viewer.cameraFlight.flyTo({ aabb, fitFOV: 35, duration: 1.0 });
+function resize() {
+  renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+  camera.aspect = wrap.clientWidth / wrap.clientHeight;
+  camera.updateProjectionMatrix();
 }
 
-// Reset camera
-window.resetCam = () => {
-  if (currentModel) {
-    fitToModel(currentModel);
-  } else {
-    viewer.cameraFlight.flyTo({ eye: [10,8,15], look: [0,2,0], up: [0,1,0] });
-  }
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 5000);
+camera.position.set(15, 10, 20);
+
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+
+const scene = new THREE.Scene();
+scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+const sun = new THREE.DirectionalLight(0xfff8e0, 1.2);
+sun.position.set(20, 40, 20);
+sun.castShadow = true;
+scene.add(sun);
+scene.add(Object.assign(new THREE.DirectionalLight(0xd0e8ff, 0.4), {position: new THREE.Vector3(-20, 10, -20)}));
+scene.add(new THREE.GridHelper(100, 50, 0x1e1e1e, 0x141414));
+
+// IFC Loader – version must match wasm
+const ifcLoader = new IFCLoader();
+await ifcLoader.ifcManager.setWasmPath('https://cdn.jsdelivr.net/npm/web-ifc@0.0.36/');
+
+let model = null;
+
+function fitCam(obj) {
+  const box = new THREE.Box3().setFromObject(obj);
+  const center = box.getCenter(new THREE.Vector3());
+  const size = box.getSize(new THREE.Vector3());
+  const d = Math.max(size.x, size.y, size.z);
+  controls.target.copy(center);
+  camera.position.set(center.x + d * 1.3, center.y + d * 0.8, center.z + d * 1.3);
+  controls.update();
+}
+
+window._resetCam = () => {
+  if (model) fitCam(model);
+  else { camera.position.set(15,10,20); controls.target.set(0,0,0); controls.update(); }
 };
+window._viewer = true;
 
-// Load IFC file
-window.loadFile = async (file) => {
-  showProgress(5);
-  showMsg('Lade IFC …', 60000);
+// Load from any URL (Google Drive direct or blob)
+window.loadFromUrl = async (url, name='Modell', onDone=null) => {
+  showLoad(true, `Lade ${name} …`, 10);
+  document.getElementById('voverlay').classList.remove('gone');
 
-  if (currentModel) {
-    currentModel.destroy();
-    currentModel = null;
-  }
+  if (model) { scene.remove(model); ifcLoader.ifcManager.disposeMemory(); model = null; }
 
   try {
-    const url = URL.createObjectURL(file);
+    showLoad(true, 'Verbinde mit Google Drive …', 20);
 
-    currentModel = await ifcLoader.load({
-      id: "model",
-      src: url,
-      excludeUnclassifiedObjects: false,
-      loadMetadata: true
-    });
+    // Fetch the IFC data ourselves (handles redirects/CORS better)
+    const resp = await fetch(url, { mode: 'cors' });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
 
-    currentModel.on('loaded', () => {
-      URL.revokeObjectURL(url);
-      document.getElementById('voverlay').classList.add('gone');
-      document.getElementById('smsg').classList.remove('vis');
-      showProgress(100);
-      fitToModel(currentModel);
-      showMsg('Modell geladen ✓', 2000);
-    });
+    showLoad(true, 'Datei wird übertragen …', 50);
+    const buf = await resp.arrayBuffer();
 
-    currentModel.on('error', (e) => {
-      console.error('IFC Fehler:', e);
-      showProgress(0);
-      showMsg('Fehler beim Laden', 4000);
-    });
+    showLoad(true, 'IFC wird verarbeitet …', 75);
+    const blob = new Blob([buf], { type: 'application/octet-stream' });
+    const blobUrl = URL.createObjectURL(blob);
 
+    model = await ifcLoader.loadAsync(blobUrl);
+    model.castShadow = true;
+    model.receiveShadow = true;
+    scene.add(model);
+    fitCam(model);
+    URL.revokeObjectURL(blobUrl);
+    if (onDone) onDone();
+
+    document.getElementById('voverlay').classList.add('gone');
+    showLoad(false);
   } catch(e) {
-    console.error('Ladefehler:', e);
-    showProgress(0);
-    showMsg('IFC konnte nicht geladen werden', 4000);
-    alert('IFC-Ladefehler: ' + e.message + '\n\nBitte F12 → Console für Details öffnen.');
+    console.error('IFC Ladefehler:', e);
+    showLoad(false);
+
+    // CORS Fehler bei Google Drive → Fallback-Hinweis
+    if (e.message.includes('CORS') || e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
+      document.getElementById('voverlay').classList.remove('gone');
+      showCorsHint();
+    } else {
+      alert(`Fehler: ${e.message}\n\nBitte F12 → Console für Details.`);
+    }
   }
 };
 
-console.log('xeokit Viewer bereit. IFC-Datei per Drag & Drop oder 📂 laden.');
+function showCorsHint() {
+  const ov = document.getElementById('voverlay');
+  ov.classList.remove('gone');
+  ov.innerHTML = `
+    <div style="text-align:center;padding:2rem;max-width:380px">
+      <div style="color:var(--gold);font-size:13px;margin-bottom:1rem;font-family:'Playfair Display',serif">Google Drive CORS-Einschränkung</div>
+      <div style="color:var(--text-dim);font-size:11px;line-height:1.8">
+        Google Drive blockiert direkte Anfragen vom Browser.<br><br>
+        <strong style="color:var(--text)">Lösung:</strong> IFC-Dateien direkt ins<br>
+        GitHub Repository hochladen:<br><br>
+        <code style="color:var(--gold);font-size:10px">buehnenbildarchiv/modelle/</code><br><br>
+        Dann URL im Format:<br>
+        <code style="color:var(--gold-dim);font-size:10px">https://plnzrh.github.io/buehnenbildarchiv/modelle/datei.ifc</code>
+      </div>
+    </div>`;
+}
+
+// Animate
+(function loop() { requestAnimationFrame(loop); controls.update(); renderer.render(scene, camera); })();
+new ResizeObserver(resize).observe(wrap);
+resize();
 </script>
 
 
