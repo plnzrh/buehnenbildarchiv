@@ -1,201 +1,210 @@
 <!DOCTYPE html>
-<html lang="de">
-<head>
+<html lang="de"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bühnenmodell Archiv</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="index-Dateien/css2.css" rel="stylesheet">
+
+<!-- xeokit SDK -->
+<script src="index-Dateien/xeokit-sdk.es.min.js"></script>
+<!-- web-ifc für IFC parsing -->
+<script src="index-Dateien/web-ifc-api.js"></script>
+
 <style>
-  :root {
-    --bg: #0a0a0a;
-    --surface: #111111;
-    --surface2: #1a1a1a;
-    --border: #2a2a2a;
-    --gold: #c9a84c;
-    --gold-dim: #7a6330;
-    --text: #e8e0d0;
-    --text-dim: #7a7060;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg); color: var(--text);
-    font-family: 'DM Mono', monospace; font-size: 13px;
-    min-height: 100vh; overflow: hidden;
-  }
-  header {
-    border-bottom: 1px solid var(--border);
-    padding: 0 2rem;
-    display: flex; align-items: center; justify-content: space-between;
-    height: 58px; background: var(--bg); position: relative; z-index: 100;
-  }
-  .logo { display: flex; align-items: baseline; gap: 1rem; }
-  .logo-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--gold); }
-  .logo-sub { color: var(--text-dim); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
-  .header-actions { display: flex; gap: .8rem; align-items: center; }
-  .app { display: grid; grid-template-columns: 300px 1fr; height: calc(100vh - 58px); }
+:root {
+  --bg:#0a0a0a; --surface:#111; --surface2:#1a1a1a;
+  --border:#2a2a2a; --gold:#c9a84c; --gold-dim:#7a6330;
+  --text:#e8e0d0; --text-dim:#7a7060;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;height:100vh;overflow:hidden}
 
-  /* SIDEBAR */
-  .sidebar { border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
-  .search-area { padding: 1rem; border-bottom: 1px solid var(--border); }
-  .search-input {
-    width: 100%; background: var(--surface2); border: 1px solid var(--border);
-    color: var(--text); font-family: 'DM Mono', monospace; font-size: 12px;
-    padding: .55rem .8rem; outline: none; margin-bottom: .5rem;
-  }
-  .search-input:focus { border-color: var(--gold-dim); }
-  .search-input::placeholder { color: var(--text-dim); }
-  .filter-row { display: flex; gap: .4rem; flex-wrap: wrap; }
-  .filter-btn {
-    background: none; border: 1px solid var(--border); color: var(--text-dim);
-    font-family: 'DM Mono', monospace; font-size: 10px; padding: .25rem .5rem;
-    cursor: pointer; letter-spacing: .06em; text-transform: uppercase; transition: all .15s;
-  }
-  .filter-btn:hover, .filter-btn.active { border-color: var(--gold); color: var(--gold); }
-  .project-list { overflow-y: auto; flex: 1; }
-  .project-list::-webkit-scrollbar { width: 3px; }
-  .project-list::-webkit-scrollbar-thumb { background: var(--border); }
-  .season-header {
-    padding: .6rem 1rem .3rem; font-size: 10px; letter-spacing: .15em;
-    text-transform: uppercase; color: var(--gold-dim);
-    border-bottom: 1px solid var(--border); background: var(--bg);
-    position: sticky; top: 0;
-  }
-  .project-item {
-    padding: .8rem 1rem; border-bottom: 1px solid var(--border);
-    cursor: pointer; transition: background .15s;
-    display: grid; grid-template-columns: 1fr auto; gap: .2rem; align-items: start;
-  }
-  .project-item:hover { background: var(--surface); }
-  .project-item.active { background: var(--surface2); border-left: 2px solid var(--gold); }
-  .project-name { font-family: 'Playfair Display', serif; font-size: .9rem; line-height: 1.3; }
-  .project-meta { font-size: 10px; color: var(--text-dim); margin-top: .15rem; }
-  .type-tag {
-    font-size: 9px; padding: .1rem .35rem; border: 1px solid var(--border);
-    color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; white-space: nowrap;
-  }
-  .type-tag.Oper { border-color: #4a2a0a; color: #c9884c; }
-  .type-tag.Schauspiel { border-color: #0a1a3a; color: #4c8bc9; }
-  .type-tag.Tanz { border-color: #2a0a3a; color: #a04cc9; }
-  .add-btn-sidebar {
-    margin: .6rem; background: none; border: 1px dashed var(--border); color: var(--text-dim);
-    font-family: 'DM Mono', monospace; font-size: 11px; padding: .6rem;
-    cursor: pointer; width: calc(100% - 1.2rem); text-transform: uppercase;
-    letter-spacing: .08em; transition: all .15s;
-  }
-  .add-btn-sidebar:hover { border-color: var(--gold); color: var(--gold); }
+header{
+  border-bottom:1px solid var(--border);padding:0 1.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+  height:54px;background:var(--bg);z-index:100;position:relative;
+}
+.logo{display:flex;align-items:baseline;gap:.8rem}
+.logo-title{font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--gold)}
+.logo-sub{color:var(--text-dim);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+.hdr-actions{display:flex;gap:.6rem;align-items:center}
 
-  /* MAIN */
-  .main { display: flex; flex-direction: column; overflow: hidden; position: relative; }
+.app{display:grid;grid-template-columns:290px 1fr;height:calc(100vh - 54px)}
 
-  /* VIEWER */
-  .viewer-wrap {
-    flex: 1; position: relative; background: #050508; overflow: hidden;
-    transition: outline .15s;
-  }
-  .viewer-wrap.dragover { outline: 2px dashed var(--gold); outline-offset: -4px; }
-  #three-canvas { display: block; width: 100%; height: 100%; }
+/* SIDEBAR */
+.sidebar{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.search-area{padding:.9rem;border-bottom:1px solid var(--border)}
+.sinput{
+  width:100%;background:var(--surface2);border:1px solid var(--border);
+  color:var(--text);font-family:'DM Mono',monospace;font-size:12px;
+  padding:.5rem .75rem;outline:none;margin-bottom:.45rem;
+}
+.sinput:focus{border-color:var(--gold-dim)}
+.sinput::placeholder{color:var(--text-dim)}
+.filters{display:flex;gap:.35rem;flex-wrap:wrap}
+.fbtn{
+  background:none;border:1px solid var(--border);color:var(--text-dim);
+  font-family:'DM Mono',monospace;font-size:10px;padding:.22rem .45rem;
+  cursor:pointer;letter-spacing:.05em;text-transform:uppercase;transition:all .15s;
+}
+.fbtn:hover,.fbtn.on{border-color:var(--gold);color:var(--gold)}
 
-  .viewer-overlay {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 1.2rem; pointer-events: none; transition: opacity .4s;
-  }
-  .viewer-overlay.hidden { opacity: 0; }
+.plist{overflow-y:auto;flex:1}
+.plist::-webkit-scrollbar{width:3px}
+.plist::-webkit-scrollbar-thumb{background:var(--border)}
 
-  .stage-icon {
-    width: 160px; height: 80px; border: 1px solid var(--border);
-    position: relative; overflow: hidden;
-  }
-  .stage-icon::before {
-    content: ''; position: absolute; bottom: 0; left: 20%; right: 20%;
-    height: 40%; background: var(--surface2); border-top: 1px solid var(--border);
-  }
-  .curtain { position: absolute; top: 0; width: 22%; height: 100%; }
-  .curtain.l { left: 0; background: linear-gradient(135deg,#1a0808,#0d0404); border-right: 1px solid #2a0808; }
-  .curtain.r { right: 0; background: linear-gradient(225deg,#1a0808,#0d0404); border-left: 1px solid #2a0808; }
-  .overlay-hint { text-align: center; color: var(--text-dim); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
-  .overlay-drop { font-size: 10px; color: var(--text-dim); opacity: .5; pointer-events: all; }
+.sh{
+  padding:.55rem .9rem .28rem;font-size:10px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--gold-dim);
+  border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;
+}
+.pi{
+  padding:.75rem .9rem;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:background .15s;
+  display:grid;grid-template-columns:1fr auto;gap:.15rem;align-items:start;
+}
+.pi:hover{background:var(--surface)}
+.pi.on{background:var(--surface2);border-left:2px solid var(--gold)}
+.pi-name{font-family:'Playfair Display',serif;font-size:.88rem;line-height:1.3}
+.pi-meta{font-size:10px;color:var(--text-dim);margin-top:.12rem}
+.ttag{
+  font-size:9px;padding:.08rem .32rem;border:1px solid var(--border);
+  color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;
+}
+.ttag.Oper{border-color:#4a2a0a;color:#c9884c}
+.ttag.Schauspiel{border-color:#0a1a3a;color:#4c8bc9}
+.ttag.Tanz{border-color:#2a0a3a;color:#a04cc9}
 
-  .active-badge {
-    position: absolute; top: 1rem; left: 1rem;
-    background: rgba(10,10,10,.88); border: 1px solid var(--border);
-    padding: .5rem .9rem; display: none; z-index: 10;
-  }
-  .active-badge.visible { display: block; }
-  .ab-title { font-family: 'Playfair Display', serif; font-size: .95rem; color: var(--text); }
-  .ab-sub { font-size: 10px; color: var(--text-dim); margin-top: .15rem; letter-spacing: .06em; }
+.add-sb{
+  margin:.55rem;background:none;border:1px dashed var(--border);color:var(--text-dim);
+  font-family:'DM Mono',monospace;font-size:11px;padding:.55rem;
+  cursor:pointer;width:calc(100% - 1.1rem);text-transform:uppercase;
+  letter-spacing:.07em;transition:all .15s;
+}
+.add-sb:hover{border-color:var(--gold);color:var(--gold)}
 
-  .vtoolbar {
-    position: absolute; top: 1rem; right: 1rem;
-    display: flex; flex-direction: column; gap: .3rem; z-index: 10;
-  }
-  .vtbtn {
-    width: 34px; height: 34px; background: rgba(10,10,10,.85);
-    border: 1px solid var(--border); color: var(--text-dim);
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    font-size: 13px; transition: all .15s; font-family: 'DM Mono', monospace;
-  }
-  .vtbtn:hover { border-color: var(--gold); color: var(--gold); }
+/* MAIN */
+.main{display:flex;flex-direction:column;overflow:hidden;position:relative}
 
-  .loading-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--border); display: none; z-index: 20; }
-  .loading-bar.active { display: block; }
-  .loading-progress { height: 100%; background: var(--gold); width: 0%; transition: width .3s; }
+/* VIEWER */
+.vwrap{
+  flex:1;position:relative;background:#050508;overflow:hidden;
+  transition:outline .15s;
+}
+.vwrap.dov{outline:2px dashed var(--gold);outline-offset:-4px}
 
-  /* DETAIL PANEL */
-  .detail-panel { border-top: 1px solid var(--border); height: 185px; display: grid; grid-template-columns: repeat(4,1fr); }
-  .detail-col { padding: .9rem 1.1rem; border-right: 1px solid var(--border); overflow: hidden; }
-  .detail-col:last-child { border-right: none; }
-  .dc-label { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-dim); margin-bottom: .6rem; padding-bottom: .35rem; border-bottom: 1px solid var(--border); }
-  .dc-big { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--gold); line-height: 1; }
-  .dc-unit { font-size: 10px; color: var(--text-dim); margin-top: .2rem; }
-  .dc-list { list-style: none; font-size: 11px; color: var(--text); line-height: 1.9; overflow: hidden; }
-  .dc-list li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .dc-list li::before { content: '—'; color: var(--text-dim); margin-right: .4rem; font-size: 10px; }
-  .detail-empty { grid-column: 1/-1; display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+#vcanvas{width:100%;height:100%;display:block}
 
-  /* BUTTONS */
-  .btn {
-    background: none; border: 1px solid var(--border); color: var(--text-dim);
-    font-family: 'DM Mono', monospace; font-size: 11px; padding: .45rem .9rem;
-    cursor: pointer; letter-spacing: .07em; text-transform: uppercase; transition: all .15s;
-  }
-  .btn:hover { border-color: var(--gold-dim); color: var(--text); }
-  .btn.primary { border-color: var(--gold-dim); color: var(--gold); }
-  .btn.primary:hover { border-color: var(--gold); background: rgba(201,168,76,.08); }
+.voverlay{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:1.1rem;pointer-events:none;transition:opacity .4s;
+}
+.voverlay.gone{opacity:0;pointer-events:none}
 
-  /* MODAL */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.88); z-index: 200; display: none; align-items: center; justify-content: center; }
-  .modal-overlay.open { display: flex; }
-  .modal { background: var(--surface); border: 1px solid var(--border); width: 500px; max-width: 95vw; max-height: 90vh; overflow-y: auto; }
-  .modal-head { padding: 1.1rem 1.4rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--surface); z-index: 1; }
-  .modal-head-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--gold); }
-  .modal-body { padding: 1.3rem; display: flex; flex-direction: column; gap: .9rem; }
-  .field { display: flex; flex-direction: column; gap: .35rem; }
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
-  .field label { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-dim); }
-  .field input, .field select, .field textarea {
-    background: var(--surface2); border: 1px solid var(--border);
-    color: var(--text); font-family: 'DM Mono', monospace; font-size: 12px;
-    padding: .55rem .75rem; outline: none; width: 100%;
-  }
-  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--gold-dim); }
-  .field textarea { resize: vertical; min-height: 70px; }
-  .ifc-notice { background: var(--surface2); border: 1px solid var(--border); padding: .8rem 1rem; font-size: 11px; color: var(--text-dim); line-height: 1.7; }
-  .ifc-notice strong { color: var(--gold); }
-  .modal-foot { padding: .9rem 1.4rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: .7rem; position: sticky; bottom: 0; background: var(--surface); }
+.stage-icon{width:150px;height:75px;border:1px solid var(--border);position:relative;overflow:hidden}
+.stage-icon::before{
+  content:'';position:absolute;bottom:0;left:20%;right:20%;
+  height:40%;background:var(--surface2);border-top:1px solid var(--border);
+}
+.curt{position:absolute;top:0;width:22%;height:100%}
+.curt.l{left:0;background:linear-gradient(135deg,#1a0808,#0d0404);border-right:1px solid #2a0808}
+.curt.r{right:0;background:linear-gradient(225deg,#1a0808,#0d0404);border-left:1px solid #2a0808}
+.oh{text-align:center;color:var(--text-dim);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.od{font-size:10px;color:var(--text-dim);opacity:.5;pointer-events:all}
 
-  /* PRINT */
-  @media print {
-    header, .sidebar, .vtoolbar, .active-badge { display: none !important; }
-    .app { grid-template-columns: 1fr; height: auto; }
-    .main { height: auto; }
-    .viewer-wrap { height: 65vh; }
-    .detail-panel { height: auto; page-break-inside: avoid; }
-    body { background: white; color: black; overflow: visible; }
-    .dc-big { color: #333; }
-    .dc-label, .dc-unit { color: #666; }
-    .detail-col { border-right: 1px solid #ccc; }
-  }
+.abadge{
+  position:absolute;top:.9rem;left:.9rem;
+  background:rgba(10,10,10,.88);border:1px solid var(--border);
+  padding:.45rem .85rem;display:none;z-index:10;
+}
+.abadge.vis{display:block}
+.ab-t{font-family:'Playfair Display',serif;font-size:.9rem}
+.ab-s{font-size:10px;color:var(--text-dim);margin-top:.12rem;letter-spacing:.05em}
+
+.vtb{
+  position:absolute;top:.9rem;right:.9rem;
+  display:flex;flex-direction:column;gap:.28rem;z-index:10;
+}
+.vt{
+  width:32px;height:32px;background:rgba(10,10,10,.85);
+  border:1px solid var(--border);color:var(--text-dim);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:12px;transition:all .15s;
+}
+.vt:hover{border-color:var(--gold);color:var(--gold)}
+
+/* Status bar */
+.statusbar{
+  position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:var(--border);display:none;z-index:20;
+}
+.statusbar.on{display:block}
+.sbprog{height:100%;background:var(--gold);width:0%;transition:width .25s}
+
+.statusmsg{
+  position:absolute;bottom:.7rem;left:50%;transform:translateX(-50%);
+  background:rgba(10,10,10,.9);border:1px solid var(--border);
+  padding:.4rem .8rem;font-size:11px;color:var(--text-dim);
+  white-space:nowrap;display:none;z-index:20;
+}
+.statusmsg.vis{display:block}
+
+/* DETAIL */
+.dpanel{border-top:1px solid var(--border);height:180px;display:grid;grid-template-columns:repeat(4,1fr)}
+.dcol{padding:.85rem 1rem;border-right:1px solid var(--border);overflow:hidden}
+.dcol:last-child{border-right:none}
+.dlabel{font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-dim);margin-bottom:.55rem;padding-bottom:.3rem;border-bottom:1px solid var(--border)}
+.dbig{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);line-height:1}
+.dunit{font-size:10px;color:var(--text-dim);margin-top:.18rem}
+.dlist{list-style:none;font-size:11px;color:var(--text);line-height:1.85;overflow:hidden}
+.dlist li{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dlist li::before{content:'—';color:var(--text-dim);margin-right:.35rem;font-size:10px}
+.dempty{grid-column:1/-1;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+
+/* BTN */
+.btn{
+  background:none;border:1px solid var(--border);color:var(--text-dim);
+  font-family:'DM Mono',monospace;font-size:11px;padding:.42rem .85rem;
+  cursor:pointer;letter-spacing:.07em;text-transform:uppercase;transition:all .15s;
+}
+.btn:hover{border-color:var(--gold-dim);color:var(--text)}
+.btn.p{border-color:var(--gold-dim);color:var(--gold)}
+.btn.p:hover{border-color:var(--gold);background:rgba(201,168,76,.08)}
+
+/* MODAL */
+.moverlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;display:none;align-items:center;justify-content:center}
+.moverlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);width:490px;max-width:95vw;max-height:90vh;overflow-y:auto}
+.mhead{padding:1rem 1.3rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--surface);z-index:1}
+.mhead-t{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold)}
+.mbody{padding:1.2rem;display:flex;flex-direction:column;gap:.85rem}
+.field{display:flex;flex-direction:column;gap:.32rem}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:.65rem}
+.field label{font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-dim)}
+.field input,.field select,.field textarea{
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--text);font-family:'DM Mono',monospace;font-size:12px;
+  padding:.5rem .7rem;outline:none;width:100%;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold-dim)}
+.field textarea{resize:vertical;min-height:65px}
+.ifc-hint{background:var(--surface2);border:1px solid var(--border);padding:.75rem .9rem;font-size:11px;color:var(--text-dim);line-height:1.7}
+.ifc-hint strong{color:var(--gold)}
+.mfoot{padding:.85rem 1.3rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:.6rem;position:sticky;bottom:0;background:var(--surface)}
+
+@media print{
+  header,.sidebar,.vtb,.abadge{display:none!important}
+  .app{grid-template-columns:1fr;height:auto}
+  .main{height:auto}
+  .vwrap{height:60vh}
+  .dpanel{height:auto;page-break-inside:avoid}
+  body{background:white;color:black;overflow:visible}
+  .dbig{color:#333}
+  .dlabel,.dunit{color:#666}
+  .dcol{border-right:1px solid #ccc}
+}
 </style>
 </head>
 <body>
@@ -203,11 +212,11 @@
 <header>
   <div class="logo">
     <span class="logo-title">Bühnenmodell</span>
-    <span class="logo-sub">Archiv & Dokumentation</span>
+    <span class="logo-sub">Archiv &amp; Dokumentation</span>
   </div>
-  <div class="header-actions">
-    <span style="color:var(--text-dim);font-size:11px" id="count-display">— Produktionen</span>
-    <button class="btn primary" onclick="openModal()">+ Neue Produktion</button>
+  <div class="hdr-actions">
+    <span style="color:var(--text-dim);font-size:11px" id="cdisp">3 Produktionen</span>
+    <button class="btn p" onclick="openModal()">+ Neue Produktion</button>
     <button class="btn" onclick="window.print()">⎙ Drucken</button>
   </div>
 </header>
@@ -215,320 +224,347 @@
 <div class="app">
   <aside class="sidebar">
     <div class="search-area">
-      <input class="search-input" type="text" id="search" placeholder="Titel, Regie, Ausstattung …" oninput="renderList()">
-      <div class="filter-row">
-        <button class="filter-btn active" onclick="setFilter('Alle',this)">Alle</button>
-        <button class="filter-btn" onclick="setFilter('Oper',this)">Oper</button>
-        <button class="filter-btn" onclick="setFilter('Schauspiel',this)">Schauspiel</button>
-        <button class="filter-btn" onclick="setFilter('Tanz',this)">Tanz</button>
+      <input class="sinput" type="text" id="search" placeholder="Titel, Regie, Ausstattung …" oninput="renderList()">
+      <div class="filters">
+        <button class="fbtn on" onclick="setF('Alle',this)">Alle</button>
+        <button class="fbtn" onclick="setF('Oper',this)">Oper</button>
+        <button class="fbtn" onclick="setF('Schauspiel',this)">Schauspiel</button>
+        <button class="fbtn" onclick="setF('Tanz',this)">Tanz</button>
       </div>
     </div>
-    <div class="project-list" id="project-list"></div>
-    <button class="add-btn-sidebar" onclick="openModal()">＋ Produktion hinzufügen</button>
+    <div class="plist" id="plist"><div><div class="sh">Spielzeit 2024/25</div><div class="pi"><div><div class="pi-name">Don Giovanni</div><div class="pi-meta">Maria Müller · Klaus Weber</div><div class="pi-meta">Premiere 15.11.2024</div></div><div class="ttag Oper">Oper</div></div><div class="pi"><div><div class="pi-name">Hamlet</div><div class="pi-meta">Thomas Berg · Anna Schreiber</div><div class="pi-meta">Premiere 20.01.2025</div></div><div class="ttag Schauspiel">Schauspiel</div></div></div><div><div class="sh">Spielzeit 2023/24</div><div class="pi"><div><div class="pi-name">Schwanensee</div><div class="pi-meta">Elena Voronova · Pierre Dupont</div><div class="pi-meta">Premiere 08.03.2024</div></div><div class="ttag Tanz">Tanz</div></div></div></div>
+    <button class="add-sb" onclick="openModal()">＋ Produktion hinzufügen</button>
   </aside>
 
   <main class="main">
-    <div class="viewer-wrap" id="viewer-wrap"
-         ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
-      <canvas id="three-canvas"></canvas>
+    <div class="vwrap" id="vwrap" ondragover="dov(event)" ondragleave="dol(event)" ondrop="dop(event)">
 
-      <div class="viewer-overlay" id="viewer-overlay">
+      <canvas id="vcanvas"></canvas>
+
+      <div class="voverlay" id="voverlay">
         <div class="stage-icon">
-          <div class="curtain l"></div>
-          <div class="curtain r"></div>
+          <div class="curt l"></div><div class="curt r"></div>
         </div>
-        <div class="overlay-hint">Produktion auswählen</div>
-        <div class="overlay-drop">oder IFC-Datei hier ablegen / 📂 öffnen</div>
+        <div class="oh">Produktion auswählen</div>
+        <div class="od">IFC-Datei hier ablegen oder 📂 öffnen</div>
       </div>
 
-      <div class="active-badge" id="active-badge">
-        <div class="ab-title" id="ab-title"></div>
-        <div class="ab-sub" id="ab-sub"></div>
+      <div class="abadge" id="abadge">
+        <div class="ab-t" id="abt"></div>
+        <div class="ab-s" id="abs"></div>
       </div>
 
-      <div class="vtoolbar">
-        <button class="vtbtn" title="Kamera zurücksetzen" onclick="window._resetCam && window._resetCam()">⟳</button>
-        <button class="vtbtn" title="IFC-Datei öffnen" onclick="document.getElementById('file-input').click()">📂</button>
-        <button class="vtbtn" title="Drucken" onclick="window.print()">⎙</button>
+      <div class="vtb">
+        <button class="vt" title="Kamera zurücksetzen" onclick="resetCam()">⟳</button>
+        <button class="vt" title="IFC öffnen" onclick="document.getElementById('fi').click()">📂</button>
+        <button class="vt" title="Drucken" onclick="window.print()">⎙</button>
       </div>
 
-      <div class="loading-bar" id="loading-bar">
-        <div class="loading-progress" id="loading-progress"></div>
-      </div>
+      <div class="statusbar" id="sb"><div class="sbprog" id="sbp"></div></div>
+      <div class="statusmsg" id="smsg"></div>
     </div>
 
-    <div class="detail-panel" id="detail-panel">
-      <div class="detail-empty">← Produktion auswählen · IFC-Datei ablegen zum Anzeigen</div>
+    <div class="dpanel" id="dpanel">
+      <div class="dempty">← Produktion auswählen · IFC-Datei ablegen zum Anzeigen im 3D-Viewer</div>
     </div>
   </main>
 </div>
 
-<input type="file" id="file-input" accept=".ifc,.dwg" style="display:none" onchange="handleFileInput(event)">
+<input type="file" id="fi" accept=".ifc" style="display:none" onchange="loadFile(event.target.files[0])">
 
 <!-- MODAL -->
-<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+<div class="moverlay" id="modal" onclick="cmo(event)">
   <div class="modal">
-    <div class="modal-head">
-      <span class="modal-head-title">Neue Produktion</span>
+    <div class="mhead">
+      <span class="mhead-t">Neue Produktion</span>
       <button class="btn" onclick="closeModal()">✕</button>
     </div>
-    <div class="modal-body">
-      <div class="ifc-notice">
-        <strong>IFC-Workflow:</strong> Exportiere dein Modell aus AutoCAD Architecture mit dem Befehl <strong>IFCEXPORT</strong>.
-        Die erzeugte IFC-Datei kannst du danach direkt per Drag &amp; Drop in den Viewer ziehen —
-        alles läuft lokal im Browser, kein Server nötig.
+    <div class="mbody">
+      <div class="ifc-hint">
+        <strong>IFC-Workflow:</strong> Befehl <strong>IFCEXPORT</strong> in AutoCAD Architecture →
+        IFC-Datei auf GitHub hochladen → per Drag&amp;Drop in den Viewer ziehen.
+        Alle Daten bleiben lokal im Browser.
       </div>
-      <div class="field-row">
-        <div class="field"><label>Titel *</label><input id="f-title" placeholder="z.B. Don Giovanni"></div>
+      <div class="frow">
+        <div class="field"><label>Titel *</label><input id="ft" placeholder="z.B. Don Giovanni"></div>
         <div class="field"><label>Gattung</label>
-          <select id="f-type"><option>Oper</option><option>Schauspiel</option><option>Tanz</option><option>Musical</option><option>Sonstiges</option></select>
+          <select id="fty"><option selected="selected">Oper</option><option>Schauspiel</option><option>Tanz</option><option>Musical</option><option>Sonstiges</option></select>
         </div>
       </div>
-      <div class="field-row">
-        <div class="field"><label>Spielzeit</label><input id="f-season" placeholder="2024/25"></div>
-        <div class="field"><label>Premiere</label><input id="f-premiere" placeholder="15.11.2024"></div>
+      <div class="frow">
+        <div class="field"><label>Spielzeit</label><input id="fs" placeholder="2024/25"></div>
+        <div class="field"><label>Premiere</label><input id="fp" placeholder="15.11.2024"></div>
       </div>
-      <div class="field-row">
-        <div class="field"><label>Regie</label><input id="f-director" placeholder="Name"></div>
-        <div class="field"><label>Bühnenbild</label><input id="f-designer" placeholder="Name"></div>
+      <div class="frow">
+        <div class="field"><label>Regie</label><input id="fd" placeholder="Name"></div>
+        <div class="field"><label>Bühnenbild</label><input id="fde" placeholder="Name"></div>
       </div>
-      <div class="field-row">
-        <div class="field"><label>Anzahl Bauteile</label><input id="f-parts" type="number" placeholder="142"></div>
-        <div class="field"><label>Gesamtgewicht (kg)</label><input id="f-weight" type="number" placeholder="3850"></div>
+      <div class="frow">
+        <div class="field"><label>Anzahl Bauteile</label><input id="fpa" type="number" placeholder="142"></div>
+        <div class="field"><label>Gesamtgewicht (kg)</label><input id="fw" type="number" placeholder="3850"></div>
       </div>
       <div class="field"><label>XRef-Dateien (eine pro Zeile)</label>
-        <textarea id="f-xrefs" placeholder="buehne_01_portal.dwg&#10;buehne_02_drehscheibe.dwg"></textarea>
+        <textarea id="fx" placeholder="buehne_01_portal.dwg
+buehne_02_drehscheibe.dwg"></textarea>
       </div>
       <div class="field"><label>Materialien (eine pro Zeile)</label>
-        <textarea id="f-materials" placeholder="Stahlrohr 60/60&#10;Birkensperrholz 18mm"></textarea>
+        <textarea id="fm" placeholder="Stahlrohr 60/60
+Birkensperrholz 18mm"></textarea>
       </div>
     </div>
-    <div class="modal-foot">
+    <div class="mfoot">
       <button class="btn" onclick="closeModal()">Abbrechen</button>
-      <button class="btn primary" onclick="saveProject()">Speichern</button>
+      <button class="btn p" onclick="saveP()">Speichern</button>
     </div>
   </div>
 </div>
 
-<!-- THREE.JS + IFC.js VIEWER (ES Module) -->
-<script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/controls/OrbitControls.js';
-import { IFCLoader } from 'https://cdn.jsdelivr.net/npm/web-ifc-three@0.0.136/IFCLoader.js';
-
-const canvas = document.getElementById('three-canvas');
-const wrap = document.getElementById('viewer-wrap');
-
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setSize(wrap.clientWidth, wrap.clientHeight);
-renderer.setClearColor(0x050508);
-renderer.shadowMap.enabled = true;
-
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(45, wrap.clientWidth / wrap.clientHeight, 0.1, 5000);
-camera.position.set(15, 10, 20);
-
-const controls = new OrbitControls(camera, canvas);
-controls.enableDamping = true;
-controls.dampingFactor = 0.06;
-
-// Lighting
-scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-const sun = new THREE.DirectionalLight(0xfff8e0, 1.2);
-sun.position.set(20, 40, 20);
-sun.castShadow = true;
-scene.add(sun);
-scene.add(Object.assign(new THREE.DirectionalLight(0xd0e8ff, 0.4), { position: new THREE.Vector3(-20, 10, -20) }));
-
-// Grid
-scene.add(new THREE.GridHelper(100, 50, 0x1e1e1e, 0x161616));
-
-// IFC Loader
-const loader = new IFCLoader();
-await loader.ifcManager.setWasmPath('https://cdn.jsdelivr.net/npm/web-ifc@0.0.36/');
-
-// Animate
-let animId;
-function animate() {
-  animId = requestAnimationFrame(animate);
-  controls.update();
-  renderer.render(scene, camera);
-}
-animate();
-
-// Resize
-new ResizeObserver(() => {
-  renderer.setSize(wrap.clientWidth, wrap.clientHeight);
-  camera.aspect = wrap.clientWidth / wrap.clientHeight;
-  camera.updateProjectionMatrix();
-}).observe(wrap);
-
-// Current model
-let model = null;
-
-function fitCamera(obj) {
-  const box = new THREE.Box3().setFromObject(obj);
-  const c = box.getCenter(new THREE.Vector3());
-  const s = box.getSize(new THREE.Vector3());
-  const d = Math.max(s.x, s.y, s.z);
-  controls.target.copy(c);
-  camera.position.set(c.x + d * 1.3, c.y + d * 0.8, c.z + d * 1.3);
-  controls.update();
-}
-
-// Reset camera (exposed globally)
-window._resetCam = () => { if (model) fitCamera(model); else { camera.position.set(15,10,20); controls.target.set(0,0,0); controls.update(); } };
-
-// Load IFC file
-window._loadIfc = async (file) => {
-  // show loading
-  const bar = document.getElementById('loading-bar');
-  const prog = document.getElementById('loading-progress');
-  bar.classList.add('active');
-  prog.style.width = '5%';
-
-  // remove old model
-  if (model) { scene.remove(model); loader.ifcManager.disposeMemory(); model = null; }
-
-  try {
-    const url = URL.createObjectURL(file);
-    const m = await loader.loadAsync(url, (xhr) => {
-      if (xhr.total) prog.style.width = Math.round(xhr.loaded / xhr.total * 90) + '%';
-    });
-    m.castShadow = true; m.receiveShadow = true;
-    scene.add(m);
-    model = m;
-    fitCamera(m);
-    URL.revokeObjectURL(url);
-    document.getElementById('viewer-overlay').classList.add('hidden');
-    prog.style.width = '100%';
-    setTimeout(() => { bar.classList.remove('active'); prog.style.width = '0%'; }, 600);
-  } catch(e) {
-    console.error(e);
-    bar.classList.remove('active');
-    alert('IFC konnte nicht geladen werden.\nBitte prüfe ob die Datei gültig ist.');
-  }
-};
-</script>
-
 <script>
 // ─── DATA ─────────────────────────────────────────────────────────────────────
-let projects = JSON.parse(localStorage.getItem('bm-projects') || 'null') || [
-  { id:1, title:"Don Giovanni", type:"Oper", season:"2024/25", premiere:"15.11.2024", director:"Maria Müller", designer:"Klaus Weber", parts:142, weight:3850,
-    xrefs:["dg_01_portal.dwg","dg_02_drehbühne.dwg","dg_03_kulissen.dwg","dg_04_soffitten.dwg"],
-    materials:["Stahlrohr 60/60 × 3mm","Birkensperrholz 18mm","Textilbespannung schwarz"] },
-  { id:2, title:"Hamlet", type:"Schauspiel", season:"2024/25", premiere:"20.01.2025", director:"Thomas Berg", designer:"Anna Schreiber", parts:89, weight:1920,
-    xrefs:["ham_01_hauptbühne.dwg","ham_02_treppe.dwg","ham_03_prospekt.dwg"],
-    materials:["Stahlblech 3mm","Rauhspund Fichte","Betonimitat GFK"] },
-  { id:3, title:"Schwanensee", type:"Tanz", season:"2023/24", premiere:"08.03.2024", director:"Elena Voronova", designer:"Pierre Dupont", parts:67, weight:1340,
-    xrefs:["swan_01_see.dwg","swan_02_schloss.dwg"],
-    materials:["Plexiglas klar 10mm","Aluminiumguss","Seidenstoff weiß"] }
+let projects = JSON.parse(localStorage.getItem('bm2') || 'null') || [
+  {id:1,title:"Don Giovanni",type:"Oper",season:"2024/25",premiere:"15.11.2024",director:"Maria Müller",designer:"Klaus Weber",parts:142,weight:3850,
+   xrefs:["dg_01_portal.dwg","dg_02_drehbühne.dwg","dg_03_kulissen.dwg"],
+   materials:["Stahlrohr 60/60 × 3mm","Birkensperrholz 18mm","Textilbespannung"]},
+  {id:2,title:"Hamlet",type:"Schauspiel",season:"2024/25",premiere:"20.01.2025",director:"Thomas Berg",designer:"Anna Schreiber",parts:89,weight:1920,
+   xrefs:["ham_01_hauptbühne.dwg","ham_02_treppe.dwg"],
+   materials:["Stahlblech 3mm","Rauhspund Fichte","Betonimitat GFK"]},
+  {id:3,title:"Schwanensee",type:"Tanz",season:"2023/24",premiere:"08.03.2024",director:"Elena Voronova",designer:"Pierre Dupont",parts:67,weight:1340,
+   xrefs:["swan_01_see.dwg","swan_02_schloss.dwg"],
+   materials:["Plexiglas 10mm","Aluminiumguss","Seidenstoff weiß"]}
 ];
-
-let activeFilter = 'Alle', activeProject = null;
-
-function save() { localStorage.setItem('bm-projects', JSON.stringify(projects)); }
+let af='Alle', ap=null;
+function save(){localStorage.setItem('bm2',JSON.stringify(projects))}
 
 // ─── LIST ─────────────────────────────────────────────────────────────────────
-function renderList() {
-  const q = document.getElementById('search').value.toLowerCase();
-  const filtered = projects.filter(p => {
-    const ok = activeFilter === 'Alle' || p.type === activeFilter;
-    const qs = !q || [p.title,p.director,p.designer,p.season].some(s => s?.toLowerCase().includes(q));
-    return ok && qs;
+function renderList(){
+  const q=document.getElementById('search').value.toLowerCase();
+  const f=projects.filter(p=>{
+    const tm=af==='Alle'||p.type===af;
+    const qm=!q||[p.title,p.director,p.designer,p.season].some(s=>s?.toLowerCase().includes(q));
+    return tm&&qm;
   });
-  const groups = {};
-  filtered.forEach(p => { if (!groups[p.season]) groups[p.season]=[]; groups[p.season].push(p); });
-  const list = document.getElementById('project-list');
-  list.innerHTML = '';
-  Object.keys(groups).sort().reverse().forEach(s => {
-    const g = document.createElement('div');
-    g.innerHTML = `<div class="season-header">Spielzeit ${s}</div>`;
-    groups[s].forEach(p => {
-      const el = document.createElement('div');
-      el.className = 'project-item' + (activeProject?.id===p.id?' active':'');
-      el.onclick = () => selectProject(p);
-      el.innerHTML = `<div><div class="project-name">${p.title}</div><div class="project-meta">${p.director||'—'} · ${p.designer||'—'}</div><div class="project-meta">Premiere ${p.premiere||'—'}</div></div><div class="type-tag ${p.type}">${p.type}</div>`;
-      g.appendChild(el);
+  const g={};
+  f.forEach(p=>{if(!g[p.season])g[p.season]=[];g[p.season].push(p)});
+  const l=document.getElementById('plist');
+  l.innerHTML='';
+  Object.keys(g).sort().reverse().forEach(s=>{
+    const d=document.createElement('div');
+    d.innerHTML=`<div class="sh">Spielzeit ${s}</div>`;
+    g[s].forEach(p=>{
+      const e=document.createElement('div');
+      e.className='pi'+(ap?.id===p.id?' on':'');
+      e.onclick=()=>selP(p);
+      e.innerHTML=`<div><div class="pi-name">${p.title}</div><div class="pi-meta">${p.director||'—'} · ${p.designer||'—'}</div><div class="pi-meta">Premiere ${p.premiere||'—'}</div></div><div class="ttag ${p.type}">${p.type}</div>`;
+      d.appendChild(e);
     });
-    list.appendChild(g);
+    l.appendChild(d);
   });
-  document.getElementById('count-display').textContent = projects.length + ' Produktionen';
+  document.getElementById('cdisp').textContent=projects.length+' Produktionen';
 }
 
-function setFilter(f,btn) {
-  activeFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+function setF(f,b){
+  af=f;
+  document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
   renderList();
 }
 
-function selectProject(p) {
-  activeProject = p;
-  renderList();
-  renderDetail(p);
-  document.getElementById('ab-title').textContent = p.title;
-  document.getElementById('ab-sub').textContent = `${p.type} · ${p.season} · Premiere ${p.premiere}`;
-  document.getElementById('active-badge').classList.add('visible');
+function selP(p){
+  ap=p; renderList(); renderDetail(p);
+  document.getElementById('abt').textContent=p.title;
+  document.getElementById('abs').textContent=`${p.type} · ${p.season} · Premiere ${p.premiere}`;
+  document.getElementById('abadge').classList.add('vis');
 }
 
-function renderDetail(p) {
-  const w = p.weight;
-  const wStr = w ? (w>=1000 ? (w/1000).toFixed(1)+' t' : w+' kg') : '—';
-  const wSub = w && w>=1000 ? w.toLocaleString('de-AT')+' kg' : '';
-  document.getElementById('detail-panel').innerHTML = `
-    <div class="detail-col"><div class="dc-label">Bauteile</div><div class="dc-big">${p.parts?.toLocaleString('de-AT')||'—'}</div><div class="dc-unit">Einzelteile gesamt</div></div>
-    <div class="detail-col"><div class="dc-label">Gesamtgewicht</div><div class="dc-big">${wStr}</div><div class="dc-unit">${wSub}</div></div>
-    <div class="detail-col"><div class="dc-label">XRef-Dateien (${(p.xrefs||[]).length})</div><ul class="dc-list">${(p.xrefs||[]).map(x=>`<li title="${x}">${x}</li>`).join('')}</ul></div>
-    <div class="detail-col"><div class="dc-label">Materialien</div><ul class="dc-list">${(p.materials||[]).map(m=>`<li title="${m}">${m}</li>`).join('')}</ul></div>`;
-}
-
-// ─── FILE HANDLING ────────────────────────────────────────────────────────────
-function handleFileInput(e) {
-  const f = e.target.files[0];
-  if (f && window._loadIfc) window._loadIfc(f);
-}
-
-function onDragOver(e) { e.preventDefault(); document.getElementById('viewer-wrap').classList.add('dragover'); }
-function onDragLeave() { document.getElementById('viewer-wrap').classList.remove('dragover'); }
-function onDrop(e) {
-  e.preventDefault();
-  document.getElementById('viewer-wrap').classList.remove('dragover');
-  const f = e.dataTransfer.files[0];
-  if (f?.name.endsWith('.ifc') && window._loadIfc) window._loadIfc(f);
-  else alert('Bitte eine .ifc-Datei ablegen.');
+function renderDetail(p){
+  const w=p.weight;
+  const ws=w?(w>=1000?(w/1000).toFixed(1)+' t':w+' kg'):'—';
+  const wu=w&&w>=1000?w.toLocaleString('de-AT')+' kg':'';
+  document.getElementById('dpanel').innerHTML=`
+    <div class="dcol"><div class="dlabel">Bauteile</div><div class="dbig">${p.parts?.toLocaleString('de-AT')||'—'}</div><div class="dunit">Einzelteile gesamt</div></div>
+    <div class="dcol"><div class="dlabel">Gesamtgewicht</div><div class="dbig">${ws}</div><div class="dunit">${wu}</div></div>
+    <div class="dcol"><div class="dlabel">XRef-Dateien (${(p.xrefs||[]).length})</div><ul class="dlist">${(p.xrefs||[]).map(x=>`<li title="${x}">${x}</li>`).join('')}</ul></div>
+    <div class="dcol"><div class="dlabel">Materialien</div><ul class="dlist">${(p.materials||[]).map(m=>`<li title="${m}">${m}</li>`).join('')}</ul></div>`;
 }
 
 // ─── MODAL ────────────────────────────────────────────────────────────────────
-function openModal() { document.getElementById('modal').classList.add('open'); }
-function closeModal() {
+function openModal(){document.getElementById('modal').classList.add('open')}
+function closeModal(){
   document.getElementById('modal').classList.remove('open');
-  ['f-title','f-season','f-premiere','f-director','f-designer','f-parts','f-weight','f-xrefs','f-materials']
-    .forEach(id => document.getElementById(id).value='');
-  document.getElementById('f-type').selectedIndex=0;
+  ['ft','fs','fp','fd','fde','fpa','fw','fx','fm'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fty').selectedIndex=0;
 }
-function closeModalOutside(e) { if(e.target===document.getElementById('modal')) closeModal(); }
-
-function saveProject() {
-  const title = document.getElementById('f-title').value.trim();
-  if (!title) { alert('Bitte Titel eingeben.'); return; }
-  const p = {
-    id: Date.now(), title,
-    type: document.getElementById('f-type').value,
-    season: document.getElementById('f-season').value||'—',
-    premiere: document.getElementById('f-premiere').value||'—',
-    director: document.getElementById('f-director').value||'—',
-    designer: document.getElementById('f-designer').value||'—',
-    parts: parseInt(document.getElementById('f-parts').value)||null,
-    weight: parseInt(document.getElementById('f-weight').value)||null,
-    xrefs: document.getElementById('f-xrefs').value.trim().split('\n').map(s=>s.trim()).filter(Boolean),
-    materials: document.getElementById('f-materials').value.trim().split('\n').map(s=>s.trim()).filter(Boolean)
+function cmo(e){if(e.target===document.getElementById('modal'))closeModal()}
+function saveP(){
+  const t=document.getElementById('ft').value.trim();
+  if(!t){alert('Bitte Titel eingeben.');return}
+  const p={
+    id:Date.now(),title:t,
+    type:document.getElementById('fty').value,
+    season:document.getElementById('fs').value||'—',
+    premiere:document.getElementById('fp').value||'—',
+    director:document.getElementById('fd').value||'—',
+    designer:document.getElementById('fde').value||'—',
+    parts:parseInt(document.getElementById('fpa').value)||null,
+    weight:parseInt(document.getElementById('fw').value)||null,
+    xrefs:document.getElementById('fx').value.trim().split('\n').map(s=>s.trim()).filter(Boolean),
+    materials:document.getElementById('fm').value.trim().split('\n').map(s=>s.trim()).filter(Boolean)
   };
-  projects.unshift(p); save(); closeModal(); renderList(); selectProject(p);
+  projects.unshift(p);save();closeModal();renderList();selP(p);
+}
+
+// ─── DRAG & DROP ──────────────────────────────────────────────────────────────
+function dov(e){e.preventDefault();document.getElementById('vwrap').classList.add('dov')}
+function dol(){document.getElementById('vwrap').classList.remove('dov')}
+function dop(e){
+  e.preventDefault();dol();
+  const f=e.dataTransfer.files[0];
+  if(f?.name.toLowerCase().endsWith('.ifc')) loadFile(f);
+  else showMsg('Bitte eine .ifc-Datei ablegen',3000);
+}
+
+// ─── STATUS ───────────────────────────────────────────────────────────────────
+function showProgress(pct){
+  const sb=document.getElementById('sb');
+  sb.classList.add('on');
+  document.getElementById('sbp').style.width=pct+'%';
+  if(pct>=100) setTimeout(()=>{sb.classList.remove('on');document.getElementById('sbp').style.width='0%'},600);
+}
+function showMsg(txt,ms=2000){
+  const m=document.getElementById('smsg');
+  m.textContent=txt;m.classList.add('vis');
+  setTimeout(()=>m.classList.remove('vis'),ms);
 }
 
 renderList();
 </script>
-</body>
-</html>
+
+<!-- XEOKIT VIEWER SCRIPT -->
+<script type="module">
+// xeokit imports
+const {
+  Viewer, WebIFCLoaderPlugin, DirLight, AmbientLight, buildGridGeometry,
+  ReadableGeometry, Mesh, PhongMaterial
+} = window.xeokit ?? {};
+
+// Fallback: load xeokit properly
+import {
+  Viewer,
+  WebIFCLoaderPlugin,
+  DirLight,
+  AmbientLight,
+  buildGridGeometry,
+  ReadableGeometry,
+  Mesh,
+  PhongMaterial
+} from "https://cdn.jsdelivr.net/npm/@xeokit/xeokit-sdk@2.3.9/dist/xeokit-sdk.es.min.js";
+
+import * as WebIFC from "https://cdn.jsdelivr.net/npm/web-ifc@0.0.51/web-ifc-api.js";
+
+const canvas = document.getElementById('vcanvas');
+const wrap = document.getElementById('vwrap');
+
+// Size canvas to parent
+function resizeCanvas() {
+  canvas.width = wrap.clientWidth;
+  canvas.height = wrap.clientHeight;
+}
+resizeCanvas();
+new ResizeObserver(resizeCanvas).observe(wrap);
+
+// Create viewer
+const viewer = new Viewer({
+  canvasId: "vcanvas",
+  transparent: false,
+  backgroundColor: [0.02, 0.02, 0.03]
+});
+
+viewer.camera.eye = [10, 8, 15];
+viewer.camera.look = [0, 2, 0];
+viewer.camera.up = [0, 1, 0];
+
+// Lights
+new AmbientLight(viewer.scene, { color: [1, 1, 1], intensity: 0.4 });
+new DirLight(viewer.scene, { dir: [0.8, -1.2, -0.5], color: [1, 0.95, 0.85], intensity: 1.2, space: "world" });
+new DirLight(viewer.scene, { dir: [-0.5, -0.4, 0.8], color: [0.6, 0.7, 1], intensity: 0.5, space: "world" });
+
+// Grid
+new Mesh(viewer.scene, {
+  geometry: new ReadableGeometry(viewer.scene, buildGridGeometry({ size: 100, divisions: 50 })),
+  material: new PhongMaterial(viewer.scene, { color: [0.12, 0.12, 0.12], emissive: [0.08, 0.08, 0.08] }),
+  position: [0, -0.1, 0], pickable: false, collidable: false
+});
+
+// IFC Loader with web-ifc
+const ifcLoader = new WebIFCLoaderPlugin(viewer, {
+  WebIFC,
+  IfcAPI: WebIFC.IfcAPI,
+  wasmPath: "https://cdn.jsdelivr.net/npm/web-ifc@0.0.51/"
+});
+
+let currentModel = null;
+
+// Fit camera to loaded model
+function fitToModel(model) {
+  const aabb = model.aabb;
+  viewer.cameraFlight.flyTo({ aabb, fitFOV: 35, duration: 1.0 });
+}
+
+// Reset camera
+window.resetCam = () => {
+  if (currentModel) {
+    fitToModel(currentModel);
+  } else {
+    viewer.cameraFlight.flyTo({ eye: [10,8,15], look: [0,2,0], up: [0,1,0] });
+  }
+};
+
+// Load IFC file
+window.loadFile = async (file) => {
+  showProgress(5);
+  showMsg('Lade IFC …', 60000);
+
+  if (currentModel) {
+    currentModel.destroy();
+    currentModel = null;
+  }
+
+  try {
+    const url = URL.createObjectURL(file);
+
+    currentModel = await ifcLoader.load({
+      id: "model",
+      src: url,
+      excludeUnclassifiedObjects: false,
+      loadMetadata: true
+    });
+
+    currentModel.on('loaded', () => {
+      URL.revokeObjectURL(url);
+      document.getElementById('voverlay').classList.add('gone');
+      document.getElementById('smsg').classList.remove('vis');
+      showProgress(100);
+      fitToModel(currentModel);
+      showMsg('Modell geladen ✓', 2000);
+    });
+
+    currentModel.on('error', (e) => {
+      console.error('IFC Fehler:', e);
+      showProgress(0);
+      showMsg('Fehler beim Laden', 4000);
+    });
+
+  } catch(e) {
+    console.error('Ladefehler:', e);
+    showProgress(0);
+    showMsg('IFC konnte nicht geladen werden', 4000);
+    alert('IFC-Ladefehler: ' + e.message + '\n\nBitte F12 → Console für Details öffnen.');
+  }
+};
+
+console.log('xeokit Viewer bereit. IFC-Datei per Drag & Drop oder 📂 laden.');
+</script>
+
+
+
+</body></html>
